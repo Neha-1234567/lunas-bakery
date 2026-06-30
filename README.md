@@ -60,24 +60,6 @@ lunas-bakery/
 └── images/              # Product and bakery images
 
 
-🚀 Getting Started
-
-
-Clone the repository
-
-
-bash   git clone https://github.com/your-username/lunas-bakery.git
-
-
-Open the project folder
-
-
-bash   cd lunas-bakery
-
-
-Open index.html directly in your browser — that's it!
-
-
 
 🔑 Admin Credentials (Demo)
 
@@ -99,7 +81,6 @@ KeyStorescartCurrent shopping cartordersAll placed orderscustomersRegistered cus
 
 ⚠️ Limitations
 
-
 No real backend or database — uses localStorage only
 Passwords are stored in plain text (not production-safe)
 Admin credentials are hardcoded in the JS
@@ -109,7 +90,6 @@ Orders aren't synced across devices or users
 
 
 🔮 Future Improvements
-
 
 Connect a real backend (Node.js + Express + MongoDB / Firebase)
 Add real payment gateway integration (Razorpay / Stripe / UPI)

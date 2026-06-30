@@ -1,0 +1,2145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luna's Bakery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #fef5f5;
+        }
+
+        nav {
+            background: white;
+            padding: 1rem 5%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .cart-icon {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #f4a5a5;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #ffd5d5, #ffb8c3);
+            padding: 6rem 5%;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            color: #5a3030;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #8a4d4d;
+            margin-bottom: 2rem;
+        }
+
+        .hero button {
+            background: #f4a5a5;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .gallery-section {
+            background: white;
+            padding: 4rem 0;
+            position: relative;
+        }
+
+        .gallery-section::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: url('images/bakery-bg4.jpeg') center/cover;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            height: 350px;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .gallery-item.wide {
+            grid-column: span 3;
+            height: 300px;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            color: white;
+            padding: 1.5rem;
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+
+        .gallery-overlay h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .gallery-overlay p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 1024px) {
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .gallery-item.wide {
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .gallery-item,
+            .gallery-item.wide {
+                grid-column: span 1;
+                height: 300px;
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 5%;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: white;
+            border: 2px solid #f4a5a5;
+            color: #333;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(244, 165, 165, 0.3);
+        }
+
+        .filter-btn.active {
+            background: #f4a5a5;
+            color: white;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .product {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .product img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .product-info {
+            padding: 1rem;
+        }
+
+        .product-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            color: #f4a5a5;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .product-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .product button {
+            flex: 1;
+            background: #f4a5a5;
+            color: white;
+            border: none;
+            padding: 0.7rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .product .btn-buy-now {
+            background: #5a3030;
+        }
+
+        .product button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            overflow-y: auto;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            margin: 2rem;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            z-index: 1;
+        }
+
+        .product-detail-modal {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .product-detail-image {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        .product-detail-info h2 {
+            font-size: 2rem;
+            color: #5a3030;
+            margin-bottom: 1rem;
+        }
+
+        .product-detail-price {
+            font-size: 1.5rem;
+            color: #f4a5a5;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .product-detail-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .qty-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .qty-btn {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            border: none;
+            background: #ffd5d5;
+            cursor: pointer;
+        }
+
+        .total {
+            text-align: right;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: #f4a5a5;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.7rem;
+            margin: 0.5rem 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .admin-panel {
+            display: none;
+        }
+
+        .admin-panel.show {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #ffd5d5;
+            font-weight: bold;
+        }
+
+        .action-btn {
+            background: #f4a5a5;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-dispatched {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .tracking-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+        }
+
+        .tracking-input {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tracking-result {
+            border: 2px solid #f4a5a5;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .tracking-timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin-top: 1rem;
+        }
+
+        .tracking-step {
+            position: relative;
+            padding: 1rem 0;
+        }
+
+        .tracking-step::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #f4a5a5;
+        }
+
+        .tracking-step.active::before {
+            background: #5a3030;
+            box-shadow: 0 0 0 4px #ffd5d5;
+        }
+
+        @media (max-width: 768px) {
+            .filters {
+                gap: 0.5rem;
+            }
+            
+            .filter-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .product-buttons {
+                flex-direction: column;
+            }
+
+            .product button {
+                width: 100%;
+            }
+
+            table {
+                font-size: 0.75rem;
+            }
+
+            th, td {
+                padding: 0.5rem;
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 300;
+            display: none;
+        }
+
+        .notification.show {
+            display: block;
+            animation: slideIn 0.3s;
+        }
+
+        .notification.success {
+            border-left: 4px solid #28a745;
+        }
+
+        .notification.error {
+            border-left: 4px solid #dc3545;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* ── Customer Auth ── */
+        .auth-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #f4a5a5;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 0.6rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            color: #aaa;
+            font-weight: 600;
+        }
+
+        .auth-tab.active {
+            color: #5a3030;
+            border-bottom: 3px solid #5a3030;
+            margin-bottom: -2px;
+        }
+
+        .auth-form { display: none; }
+        .auth-form.active { display: block; }
+
+        .my-orders-banner {
+            background: #fef5f5;
+            border: 1px solid #f4a5a5;
+            border-radius: 10px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .my-orders-banner h4 {
+            color: #5a3030;
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+        }
+
+        .my-order-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f0dada;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .my-order-row:last-child { border-bottom: none; }
+
+        .my-order-id {
+            font-weight: bold;
+            color: #5a3030;
+            cursor: pointer;
+            text-decoration: underline dotted;
+        }
+
+        .my-order-id:hover { color: #f4a5a5; }
+
+        /* ── NEW: Reviews Section ── */
+        .reviews-section {
+            background: #fff;
+            padding: 3rem 5%;
+        }
+
+        .review-form-box {
+            max-width: 560px;
+            margin: 0 auto 2.5rem;
+            background: #fef5f5;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .review-form-box h3 {
+            font-size: 1.2rem;
+            color: #5a3030;
+            margin-bottom: 1rem;
+        }
+
+        .star-picker {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin: 0.5rem 0 0.8rem;
+        }
+
+        .star-picker label {
+            font-size: 0.9rem;
+            color: #555;
+            margin-right: 0.3rem;
+        }
+
+        .star-opt {
+            font-size: 1.8rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.15s;
+            line-height: 1;
+        }
+
+        .star-opt.active { color: #f4b942; }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .review-card {
+            background: #fef5f5;
+            padding: 1.3rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+
+        .review-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.6rem;
+        }
+
+        .review-card-name {
+            font-weight: bold;
+            color: #5a3030;
+            font-size: 1rem;
+        }
+
+        .review-stars { color: #f4b942; font-size: 1rem; }
+
+        .review-card-text {
+            font-size: 0.92rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .review-card-date {
+            font-size: 0.75rem;
+            color: #aaa;
+            margin-top: 0.6rem;
+        }
+
+        .no-reviews {
+            text-align: center;
+            color: #aaa;
+            padding: 2rem;
+            grid-column: 1 / -1;
+        }
+
+        /* ── NEW: Order Confirmation Modal ── */
+        .order-id-box {
+            background: #fef5f5;
+            border: 2px dashed #f4a5a5;
+            border-radius: 12px;
+            padding: 1.2rem;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .order-id-box .order-id-label {
+            font-size: 0.85rem;
+            color: #888;
+            display: block;
+            margin-bottom: 0.4rem;
+        }
+
+        .order-id-box .order-id-value {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #5a3030;
+            letter-spacing: 1px;
+        }
+
+        .order-id-box .copy-btn {
+            display: inline-block;
+            margin-top: 0.7rem;
+            background: #f4a5a5;
+            color: white;
+            border: none;
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            width: auto;
+        }
+
+        .confirm-modal-text {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        /* ── Footer ── */
+        .site-footer {
+            background: #2d1a1a;
+            color: #f0d9d9;
+            padding: 3rem 5% 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 2.5rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(244,165,165,0.2);
+        }
+
+        .footer-brand .footer-logo {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #f4a5a5;
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-brand p {
+            font-size: 0.88rem;
+            color: #c9a9a9;
+            line-height: 1.7;
+            max-width: 240px;
+        }
+
+        .footer-brand .footer-socials {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1.2rem;
+        }
+
+        .footer-brand .footer-socials a {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(244,165,165,0.15);
+            border: 1px solid rgba(244,165,165,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+
+        .footer-brand .footer-socials a:hover {
+            background: rgba(244,165,165,0.3);
+        }
+
+        .footer-col h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #f4a5a5;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .footer-col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+        }
+
+        .footer-col ul li a {
+            font-size: 0.87rem;
+            color: #c9a9a9;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .footer-col ul li a:hover {
+            color: #f4a5a5;
+        }
+
+        .footer-col .footer-contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.87rem;
+            color: #c9a9a9;
+            margin-bottom: 0.55rem;
+            line-height: 1.5;
+        }
+
+        .footer-col .footer-contact-item span:first-child {
+            min-width: 18px;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.2rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .footer-bottom p {
+            font-size: 0.82rem;
+            color: #9a7a7a;
+        }
+
+        .footer-bottom-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-bottom-links a {
+            font-size: 0.82rem;
+            color: #9a7a7a;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .footer-bottom-links a:hover {
+            color: #f4a5a5;
+        }
+
+        @media (max-width: 900px) {
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* ── Search Bar ── */
+        .search-wrap {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 2px solid #f4a5a5;
+            border-radius: 50px;
+            padding: 0.4rem 0.4rem 0.4rem 1.2rem;
+            width: 100%;
+            max-width: 480px;
+            transition: box-shadow 0.3s;
+        }
+
+        .search-box:focus-within {
+            box-shadow: 0 4px 15px rgba(244, 165, 165, 0.35);
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 0.95rem;
+            background: transparent;
+            color: #333;
+            padding: 0;
+            margin: 0;
+        }
+
+        .search-box button {
+            background: #f4a5a5;
+            border: none;
+            border-radius: 50px;
+            color: white;
+            padding: 0.5rem 1.1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .search-box button:hover {
+            background: #5a3030;
+        }
+
+        .search-no-results {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #aaa;
+            font-size: 1rem;
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">🥐 Luna's Bakery</div>
+        <ul class="nav-menu">
+            <li><a onclick="showHome()">Home</a></li>
+            <li><a onclick="showMenu()">Menu</a></li>
+            <li><a onclick="showTracking()">Track Order</a></li>
+            <li><a onclick="showReviews()">Reviews</a></li>
+            <li>
+                <span class="cart-icon" onclick="openCart()">
+                    🛒 <span class="cart-count" id="cartCount">0</span>
+                </span>
+            </li>
+            <li><span id="navUserBtn" onclick="openUserModal()" style="cursor:pointer;">👤</span></li>
+        </ul>
+    </nav>
+
+    <div class="notification" id="notification"></div>
+
+    <div id="mainContent">
+        <div class="hero">
+            <h1>Where Every Bite Feels Like Home</h1>
+            <p>Fresh cakes, baked with love 💕</p>
+            <button onclick="showMenu()">Explore Menu</button>
+        </div>
+
+        <div class="gallery-section">
+            <div class="container">
+                <h2 class="section-title">Our Bakery</h2>
+                <div class="gallery-grid">
+                    <div class="gallery-item">
+                        <img src="images/cakesglass.jpeg" alt="Cake Display">
+                        <div class="gallery-overlay">
+                            <h3>Cake Display</h3>
+                            <p>Freshly baked and beautifully presented</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="images/cakesglass2.jpeg" alt="Cake Showcase">
+                        <div class="gallery-overlay">
+                            <h3>Signature Creations</h3>
+                            <p>Premium cakes for every occasion</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="images/bakery-bg.jpg.jpeg" alt="Bakery Interior">
+                        <div class="gallery-overlay">
+                            <h3>Our Space</h3>
+                            <p>Visit us for fresh bakes daily</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item wide">
+                        <img src="images/bakery-bg3.jpeg" alt="Bakery Selection">
+                        <div class="gallery-overlay">
+                            <h3>Handcrafted with Love</h3>
+                            <p>Every item made fresh daily with premium ingredients</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <h2 class="section-title">Our Menu</h2>
+            
+            <div class="search-wrap">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search cakes, breads, drinks..." oninput="searchProducts()" onkeydown="if(event.key==='Escape'){clearSearch()}">
+                    <button onclick="clearSearch()">&#10005; Clear</button>
+                </div>
+            </div>
+
+            <div class="filters">
+                <button class="filter-btn active" onclick="filter('all')">All</button>
+                <button class="filter-btn" onclick="filter('cake')">Cakes</button>
+                <button class="filter-btn" onclick="filter('pastry')">Pastries</button>
+                <button class="filter-btn" onclick="filter('bread')">Breads</button>
+                <button class="filter-btn" onclick="filter('muffin')">Muffins</button>
+                <button class="filter-btn" onclick="filter('cupcake')">Cupcakes</button>
+                <button class="filter-btn" onclick="filter('drink')">Drinks</button>
+                <button class="filter-btn" onclick="filter('combo')">Combos</button>
+            </div>
+
+            <div class="products" id="products"></div>
+        </div>
+
+        <div class="container">
+            <h2 class="section-title">Order Now</h2>
+            <div style="max-width: 500px; margin: 0 auto; background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <form onsubmit="quickOrder(event)">
+                    <input type="text" placeholder="Your Name" id="orderName" required>
+                    <input type="tel" placeholder="Phone Number" id="orderPhone" required>
+                    <select id="orderProduct" required>
+                        <option value="">Select a Product</option>
+                    </select>
+                    <button type="submit" class="btn-primary">Place Order</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="container" id="trackingSection" style="display:none;">
+            <h2 class="section-title">Track Your Order</h2>
+            <div class="tracking-section">
+                <div id="myOrdersBanner"></div>
+                <div class="tracking-input">
+                    <input type="text" id="trackingId" placeholder="Enter Order ID" style="flex:1;">
+                    <button class="btn-primary" onclick="trackOrder()" style="width:auto; padding:0.7rem 2rem;">Track</button>
+                </div>
+                <div id="trackingResult"></div>
+            </div>
+        </div>
+
+        <!-- NEW: Reviews Section -->
+        <div class="reviews-section" id="reviewsSection" style="display:none;">
+            <h2 class="section-title">Customer Reviews</h2>
+
+            <div class="review-form-box">
+                <h3>Share Your Experience 💬</h3>
+                <form onsubmit="submitReview(event)">
+                    <input type="text" id="reviewName" placeholder="Your Name" required>
+                    <div class="star-picker">
+                        <label>Rating:</label>
+                        <span class="star-opt" data-val="1" onclick="setRating(1)">★</span>
+                        <span class="star-opt" data-val="2" onclick="setRating(2)">★</span>
+                        <span class="star-opt" data-val="3" onclick="setRating(3)">★</span>
+                        <span class="star-opt" data-val="4" onclick="setRating(4)">★</span>
+                        <span class="star-opt" data-val="5" onclick="setRating(5)">★</span>
+                    </div>
+                    <input type="hidden" id="reviewRating" value="0">
+                    <textarea id="reviewText" placeholder="Tell us about your experience..." rows="3" required></textarea>
+                    <button type="submit" class="btn-primary">Submit Review</button>
+                </form>
+            </div>
+
+            <div class="reviews-grid" id="reviewsGrid"></div>
+        </div>
+
+    </div><!-- end #mainContent -->
+
+    <div id="adminPanel" class="admin-panel">
+        <div class="container">
+            <h2 class="section-title">Admin Dashboard</h2>
+            <div id="adminContent"></div>
+            <button class="btn-primary" onclick="logout()" style="margin-top:2rem;">Logout</button>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeProductModal()">×</button>
+            <div class="product-detail-modal" id="productDetail"></div>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div class="modal" id="cartModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCart()">×</button>
+            <h2>Shopping Cart</h2>
+            <div id="cartItems"></div>
+            <div class="total">Total: ₹<span id="cartTotal">0</span></div>
+            <button class="btn-primary" onclick="checkout()">Checkout</button>
+        </div>
+    </div>
+
+    <!-- Customer Auth Modal -->
+    <div class="modal" id="customerAuthModal">
+        <div class="modal-content" style="max-width:400px;">
+            <button class="modal-close" onclick="closeCustomerAuth()">×</button>
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchAuthTab('login')">Login</button>
+                <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <div class="auth-form active" id="authLoginForm">
+                <h3 style="color:#5a3030; margin-bottom:1rem;">Welcome Back 👋</h3>
+                <input type="email" id="custLoginEmail" placeholder="Email Address">
+                <input type="password" id="custLoginPassword" placeholder="Password">
+                <button class="btn-primary" onclick="customerLogin()" style="margin-top:0.5rem;">Login</button>
+            </div>
+
+            <!-- Signup Form -->
+            <div class="auth-form" id="authSignupForm">
+                <h3 style="color:#5a3030; margin-bottom:1rem;">Create Account 🎂</h3>
+                <input type="text" id="custSignupName" placeholder="Full Name">
+                <input type="tel" id="custSignupPhone" placeholder="Phone Number">
+                <input type="email" id="custSignupEmail" placeholder="Email Address">
+                <input type="password" id="custSignupPassword" placeholder="Create Password">
+                <button class="btn-primary" onclick="customerSignup()" style="margin-top:0.5rem;">Sign Up</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeLogin()">×</button>
+            <h2>Admin Login</h2>
+            <input type="email" id="email" placeholder="admin@lunasbakery.com">
+            <input type="password" id="password" placeholder="admin123">
+            <button class="btn-primary" onclick="login()">Login</button>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal" id="checkoutModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCheckout()">×</button>
+            <h2>Checkout</h2>
+            <input type="text" placeholder="Full Name" id="custName" required>
+            <input type="tel" placeholder="Phone Number" id="custPhone" required>
+            <input type="email" placeholder="Email Address" id="custEmail" required>
+            <textarea placeholder="Delivery Address" id="custAddress" required rows="3"></textarea>
+            <input type="text" placeholder="Landmark (Optional)" id="custLandmark">
+            <select id="payment">
+                <option>Cash on Delivery</option>
+                <option>Online Payment</option>
+            </select>
+            <div class="total">Total: ₹<span id="checkoutTotal">0</span></div>
+            <button class="btn-primary" onclick="placeOrder()">Place Order</button>
+        </div>
+    </div>
+
+    <!-- Buy Now Modal -->
+    <div class="modal" id="buyNowModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeBuyNow()">×</button>
+            <h2>Buy Now</h2>
+            <div id="buyNowProduct"></div>
+            <input type="text" placeholder="Full Name" id="buyName" required>
+            <input type="tel" placeholder="Phone Number" id="buyPhone" required>
+            <input type="email" placeholder="Email Address" id="buyEmail" required>
+            <textarea placeholder="Delivery Address" id="buyAddress" required rows="3"></textarea>
+            <input type="text" placeholder="Landmark (Optional)" id="buyLandmark">
+            <select id="buyPayment">
+                <option>Cash on Delivery</option>
+                <option>Online Payment</option>
+            </select>
+            <div class="total">Total: ₹<span id="buyTotal">0</span></div>
+            <button class="btn-primary" onclick="confirmBuyNow()">Confirm Order</button>
+        </div>
+    </div>
+
+    <!-- NEW: Order Confirmation Modal -->
+    <div class="modal" id="orderConfirmModal">
+        <div class="modal-content" style="max-width:420px; text-align:center;">
+            <button class="modal-close" onclick="closeOrderConfirm()">×</button>
+            <div style="font-size:3.5rem; margin-bottom:0.5rem;">🎉</div>
+            <h2 style="color:#5a3030; margin-bottom:0.8rem;">Order Placed!</h2>
+            <p class="confirm-modal-text">Your order has been received. Save your Order ID below to track your delivery anytime.</p>
+            <div class="order-id-box">
+                <span class="order-id-label">YOUR ORDER ID</span>
+                <span class="order-id-value" id="confirmedOrderId"></span>
+                <br>
+                <button class="copy-btn" onclick="copyOrderId()">📋 Copy ID</button>
+            </div>
+            <p class="confirm-modal-text" style="margin-top:0.8rem; font-size:0.88rem; color:#999;">Use this ID in <strong>Track Order</strong> to follow your delivery status.</p>
+            <button class="btn-primary" onclick="closeOrderConfirm()" style="margin-top:1rem;">Got it!</button>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-grid">
+
+            <!-- Brand -->
+            <div class="footer-brand">
+                <div class="footer-logo">🥐 Luna's Bakery</div>
+                <p>Handcrafted with love every single day. Fresh cakes, pastries, breads and more — baked to make every moment sweeter.</p>
+                <div class="footer-socials">
+                    <a href="#" title="Instagram">📸</a>
+                    <a href="#" title="Facebook">📘</a>
+                    <a href="#" title="WhatsApp">💬</a>
+                    <a href="#" title="Twitter">🐦</a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a onclick="showHome()">Home</a></li>
+                    <li><a onclick="showMenu()">Our Menu</a></li>
+                    <li><a onclick="showTracking()">Track Order</a></li>
+                    <li><a onclick="showReviews()">Reviews</a></li>
+                    <li><a onclick="openLogin()">Admin Login</a></li>
+                </ul>
+            </div>
+
+            <!-- Menu Categories -->
+            <div class="footer-col">
+                <h4>Menu</h4>
+                <ul>
+                    <li><a onclick="filterFromFooter('cake')">Cakes</a></li>
+                    <li><a onclick="filterFromFooter('pastry')">Pastries</a></li>
+                    <li><a onclick="filterFromFooter('bread')">Breads</a></li>
+                    <li><a onclick="filterFromFooter('muffin')">Muffins</a></li>
+                    <li><a onclick="filterFromFooter('cupcake')">Cupcakes</a></li>
+                    <li><a onclick="filterFromFooter('drink')">Drinks</a></li>
+                    <li><a onclick="filterFromFooter('combo')">Combos</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact -->
+            <div class="footer-col">
+                <h4>Contact Us</h4>
+                <div class="footer-contact-item"><span>📍</span><span>123 Bakery Lane, Sweet Street, Mumbai 400001</span></div>
+                <div class="footer-contact-item"><span>📞</span><span>+91 98765 43210</span></div>
+                <div class="footer-contact-item"><span>📧</span><span>hello@lunasbakery.com</span></div>
+                <div class="footer-contact-item"><span>🕐</span><span>Mon–Sat: 8am – 8pm<br>Sunday: 9am – 6pm</span></div>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2025 Luna's Bakery. All rights reserved. Made with 💕</p>
+            <div class="footer-bottom-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Refund Policy</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const PRODUCTS = [
+            {id:1, name:'Berry Chantilly Cake',      price:599, category:'cake',    img:'images/berrychantillycake.jpeg',       description:'Light chantilly cream cake loaded with fresh mixed berries. A showstopper for every celebration.'},
+            {id:2, name:'Oreo cake',                     price:449, category:'cake',    img:'images/cake1.jpeg',                    description:'Our classic signature cake baked fresh daily with premium ingredients.'},
+            {id:3, name:'Lemon cake',                     price:449, category:'cake',    img:'images/cake2.jpeg',                    description:'A beautifully layered specialty cake crafted with love and the finest flavors.'},
+            {id:4, name:'Cheesecake',                 price:599, category:'cake',    img:'images/cheesecake.jpeg',               description:'Classic New York style cheesecake with a buttery graham cracker crust. Smooth, creamy, and irresistible.'},
+            {id:5, name:'Orange Cake',                price:449, category:'cake',    img:'images/orangecake.jpeg',               description:'Light and fluffy orange-infused cake with fresh zest and a citrus glaze.'},
+            {id:6, name:'Peach Cake',                 price:499, category:'cake',    img:'images/peach.jpeg',                    description:'Delicate sponge cake layered with fresh peach slices and whipped cream.'},
+            {id:7, name:'Strawberry Tiramisu Cake',   price:699, category:'cake',    img:'images/strawberrytiramisucake.jpeg',   description:'A unique twist on classic tiramisu with fresh strawberries and mascarpone cream layers.'},
+            {id:8, name:'Tiramisu Cake',              price:649, category:'cake',    img:'images/tiramisucake.jpeg',             description:'Italian-inspired tiramisu with coffee-soaked sponge and rich mascarpone cream.'},
+            // Pastries
+            {id:9,  name:'Pastry 1',                  price:149, category:'pastry',  img:'images/pastry1.jpeg',                  description:'Our signature fresh pastry baked golden every morning.'},
+            {id:10, name:'Apple Pie',                 price:249, category:'pastry',  img:'images/applepie.jpeg',                 description:'Traditional apple pie with flaky crust and cinnamon-spiced apple filling.'},
+            {id:11, name:'Tres Leches',               price:299, category:'pastry',  img:'images/tres lechespastry.jpeg',         description:'Sponge cake soaked in 3 kinds of milk and topped with whipped cream. A classic indulgence.'},
+            {id:12, name:'Oreo Cheesecake Pastry',    price:199, category:'pastry',  img:'images/oreocheesepastry.jpeg',         description:'Creamy cheesecake pastry with an Oreo crumb base and cookie crumble topping.'},
+            {id:13, name:'Carrot Pastry',             price:169, category:'pastry',  img:'images/carrotpastry.jpeg',             description:'Moist carrot cake pastry with cream cheese frosting and a hint of cinnamon.'},
+            {id:14, name:'Mango Chocolate Layer',     price:199, category:'pastry',  img:'images/mangochocolatelayerpastry.jpeg',description:'Indulgent layers of mango and chocolate in a delightful pastry slice.'},
+            {id:15, name:'Fruit Cream Pastry',        price:179, category:'pastry',  img:'images/fruitcreampastry.jpeg',         description:'Fresh seasonal fruits layered with light whipped cream on a soft sponge base.'},
+            {id:16, name:'Watermelon Pastry',         price:169, category:'pastry',  img:'images/watermelonpastry.jpeg',         description:'Refreshing watermelon-flavored pastry, light and perfect for warm days.'},
+            {id:17, name:'Peach Sponge Pastry',       price:179, category:'pastry',  img:'images/peachspongepastry.jpeg',        description:'Soft peach sponge pastry layered with cream and fresh peach slices.'},
+            {id:18, name:'Matcha Layered Pastry',     price:189, category:'pastry',  img:'images/matchalayeredpastry.jpeg',      description:'Beautiful green matcha layered pastry with a smooth creamy filling.'},
+            {id:19, name:'Cheeseberry Pastry',        price:179, category:'pastry',  img:'images/cheeseberrypastry.jpeg',        description:'Cream cheese pastry topped with fresh mixed berries and a light glaze.'},
+            {id:20, name:'Chocolate Mousse Pastry',   price:189, category:'pastry',  img:'images/chocolatemoussepastry.jpeg',    description:'Rich chocolate mousse in a crisp pastry shell — a chocolate lover\'s dream.'},
+            {id:21, name:'Lotus Biscoff Pastry',      price:199, category:'pastry',  img:'images/lotusbiscoffpastry.jpeg',       description:'Creamy lotus biscoff filling in a golden pastry shell with caramelized biscuit crumble.'},
+            // Breads
+            {id:22, name:'Whole Wheat Bread',         price:129, category:'bread',   img:'images/wholewheatbread.jpeg',          description:'Freshly baked wholesome whole wheat bread, perfect for a healthy start to your day.'},
+            {id:23, name:'Multigrain Bread',          price:139, category:'bread',   img:'images/multigrainbread.jpeg',          description:'Hearty multigrain bread packed with seeds and grains for a nutritious bite.'},
+            {id:24, name:'Sourdough Bread',           price:149, category:'bread',   img:'images/sourdoughbread.jpeg',           description:'Classic tangy sourdough with a crispy crust and chewy interior, slow-fermented to perfection.'},
+            {id:25, name:'Bagel Bread',               price:119, category:'bread',   img:'images/bagelbread.jpeg',               description:'Chewy, golden bagel bread — great for sandwiches or toasted with butter.'},
+            {id:26, name:'Baguette Bread',            price:119, category:'bread',   img:'images/baguttebread.jpeg',             description:'Crispy French baguette with a light, airy crumb. Perfect alongside soups and salads.'},
+            {id:27, name:'Focaccia Bread',            price:149, category:'bread',   img:'images/focashiabread.jpeg',            description:'Italian focaccia drizzled with olive oil and seasoned with herbs and sea salt.'},
+            {id:28, name:'Challah Bread',             price:159, category:'bread',   img:'images/challahbread.jpeg',             description:'Soft, slightly sweet braided challah bread with a golden egg-wash crust.'},
+            {id:29, name:'Color Breads',              price:159, category:'bread',   img:'images/colorbreads.jpeg',              description:'Vibrant soft breads made with natural colors. Fun, fluffy, and perfect for any meal.'},
+            {id:30, name:'Croissant Bread',           price:139, category:'bread',   img:'images/croissant.jpeg',                description:'Buttery, flaky croissant-style bread baked to golden perfection.'},
+            {id:31, name:'Donut',                     price:89,  category:'bread',   img:'images/donut.jpeg',                    description:'Classic glazed donuts made fresh daily. Soft, sweet, and delightful.'},
+            // Muffins
+            {id:32, name:'Cherry Muffin',             price:99,  category:'muffin',  img:'images/cherrymuff.jpeg',               description:'Freshly baked muffins loaded with juicy cherries. Perfect with your morning coffee.'},
+            {id:33, name:'Chocolate Muffin',          price:99,  category:'muffin',  img:'images/chocomuff.jpeg',                description:'Double chocolate muffins with chocolate chips inside. Rich, moist, and irresistible.'},
+            {id:34, name:'Lilly Muffin',              price:109, category:'muffin',  img:'images/lillymuff.jpeg',                description:'Delicate lilly-inspired muffin with a light vanilla flavour and floral finish.'},
+            {id:35, name:'Pink Vanilla Muffin',       price:109, category:'muffin',  img:'images/pinkvanillamuff.jpeg',          description:'Fluffy pink vanilla muffin topped with pastel-coloured frosting — pretty and delicious.'},
+            {id:36, name:'Teddy Muffin',              price:119, category:'muffin',  img:'images/teddymuff.jpeg',                description:'Adorable teddy bear-topped muffin, soft and sweet — a favourite with kids.'},
+            // Cupcakes
+            {id:37, name:'Choco Chip Cupcake',        price:149, category:'cupcake', img:'images/chocochipcup.jpeg',             description:'Moist chocolate cupcake studded with chocolate chips and topped with creamy frosting.'},
+            {id:38, name:'Assorted Cupcakes',         price:399, category:'cupcake', img:'images/cupcakes.jpeg',                 description:'Box of 6 assorted gourmet cupcakes. Perfect for parties and gifting.'},
+            {id:39, name:'Red Velvet Cupcake',        price:149, category:'cupcake', img:'images/redvelvetcup.jpeg',             description:'Classic red velvet cupcake with signature cream cheese frosting.'},
+            {id:40, name:'Strawberry Cupcake',        price:149, category:'cupcake', img:'images/strawberrycup.jpeg',            description:'Fresh strawberry cupcake with real fruit frosting and a berry on top.'},
+            {id:41, name:'Vanilla Cupcake',           price:129, category:'cupcake', img:'images/vanillacup.jpeg',               description:'Light and fluffy vanilla cupcake topped with swirls of buttercream frosting.'},
+            // Drinks
+            {id:42, name:'Berry Drinks',              price:149, category:'drink',   img:'images/berrydrinks.jpeg',              description:'Mixed berry smoothie bursting with fresh strawberries, blueberries, and raspberries.'},
+            {id:43, name:'Black Lemon Tea',           price:99,  category:'drink',   img:'images/blacklemontea.jpeg',            description:'Refreshing black tea with a squeeze of fresh lemon. Light and invigorating.'},
+            {id:44, name:'Choco Bust Drink',          price:169, category:'drink',   img:'images/chocobustdrink.jpeg',           description:'A rich indulgent chocolate drink that is thick, creamy, and full of flavour.'},
+            {id:45, name:'Cold Coffee',               price:159, category:'drink',   img:'images/coldcoffee.jpeg',               description:'Iced coffee blended smooth with milk. The perfect pick-me-up on a warm day.'},
+            {id:46, name:'Drinks',                    price:129, category:'drink',   img:'images/drinks.jpeg',                   description:'Refreshing house specialty drinks made fresh daily.'},
+            {id:47, name:'Drinks Special',            price:149, category:'drink',   img:'images/drinks1.jpeg',                  description:'Our special seasonal drink crafted with handpicked ingredients.'},
+            {id:48, name:'Iced White Mocha',          price:179, category:'drink',   img:'images/icedwhitemochadrink.jpeg',      description:'Chilled espresso with white chocolate mocha sauce and milk over ice.'},
+            {id:49, name:'Matcha Drink',              price:169, category:'drink',   img:'images/matchadrink.jpeg',              description:'Authentic Japanese matcha latte — creamy, earthy, and energizing.'},
+            {id:50, name:'Orange Mojito',             price:139, category:'drink',   img:'images/orangemojito.jpeg',             description:'Fresh orange juice with mint and soda — a bright, zesty mocktail.'},
+            // Combos
+            {id:51, name:'Blueberry Combo',           price:249, category:'combo',   img:'images/blueberrycombo.jpeg',           description:'Fresh blueberry drink paired with a blueberry pastry. A berry lover\'s delight.'},
+            {id:52, name:'Coffee Combo',              price:249, category:'combo',   img:'images/coffeecombo.jpeg',              description:'Hot coffee paired with your choice of pastry — the perfect morning combo.'},
+            {id:53, name:'Latte Combo',               price:229, category:'combo',   img:'images/lattecombo.jpeg',               description:'Creamy latte with a sweet dessert of your choice. Ideal for a relaxing break.'},
+            {id:54, name:'Strawberry Combo',          price:199, category:'combo',   img:'images/strawberrycombo.jpeg',          description:'Fresh strawberry drink with a matching strawberry dessert. Simply delightful.'},
+            {id:55, name:'Coffee & Cheesecake Combo', price:299, category:'combo',   img:'images/coffeandcheesecakecombo.jpeg',  description:'A rich slice of cheesecake paired with your favourite coffee. The ultimate treat.'},
+            {id:56, name:'Purple Combo',              price:219, category:'combo',   img:'images/purplecombo.jpeg',              description:'A gorgeous purple-themed drink and dessert combo — as beautiful as it is delicious.'}
+        ];
+
+        let cart = [];
+        let user = null;
+        let currentFilter = 'all';
+        let buyNowProduct = null;
+        let selectedRating = 0;
+
+        function save(key, val) {
+            localStorage.setItem(key, JSON.stringify(val));
+        }
+
+        function load(key) {
+            try {
+                const val = JSON.parse(localStorage.getItem(key));
+                return val !== null ? val : [];
+            } catch {
+                return [];
+            }
+        }
+
+        function searchProducts() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (!query) {
+                // empty search — fall back to current category filter
+                showProducts();
+                return;
+            }
+            const results = PRODUCTS.filter(p =>
+                p.name.toLowerCase().includes(query) ||
+                p.category.toLowerCase().includes(query) ||
+                p.description.toLowerCase().includes(query)
+            );
+            const grid = document.getElementById('products');
+            if (!results.length) {
+                grid.innerHTML = '<div class="search-no-results">😔 No products found for "<strong>' + query + '</strong>"</div>';
+                return;
+            }
+            grid.innerHTML = results.map(p => `
+                <div class="product">
+                    <img src="${p.img}" alt="${p.name}" onclick="showProductDetail(${p.id})" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22280%22 height=%22250%22%3E%3Crect fill=%22%23ffd5d5%22 width=%22280%22 height=%22250%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 fill=%22%235a3030%22 font-size=%2216%22%3E${p.name}%3C/text%3E%3C/svg%3E'">
+                    <div class="product-info">
+                        <div class="product-name">${p.name}</div>
+                        <div class="product-price">&#8377;${p.price}</div>
+                        <div class="product-buttons">
+                            <button onclick="addToCart(${p.id})">Add to Cart</button>
+                            <button class="btn-buy-now" onclick="buyNow(${p.id})">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            showProducts();
+        }
+
+        function showProducts() {
+            const filtered = currentFilter === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.category === currentFilter);
+            document.getElementById('products').innerHTML = filtered.map(p => `
+                <div class="product">
+                    <img src="${p.img}" alt="${p.name}" onclick="showProductDetail(${p.id})" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22280%22 height=%22250%22%3E%3Crect fill=%22%23ffd5d5%22 width=%22280%22 height=%22250%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 fill=%22%235a3030%22 font-size=%2216%22%3E${p.name}%3C/text%3E%3C/svg%3E'">
+                    <div class="product-info">
+                        <div class="product-name">${p.name}</div>
+                        <div class="product-price">₹${p.price}</div>
+                        <div class="product-buttons">
+                            <button onclick="addToCart(${p.id})">Add to Cart</button>
+                            <button class="btn-buy-now" onclick="buyNow(${p.id})">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            const select = document.getElementById('orderProduct');
+            if (select) {
+                select.innerHTML = '<option value="">Select a Product</option>' + 
+                    PRODUCTS.map(p => `<option value="${p.id}">${p.name} - ₹${p.price}</option>`).join('');
+            }
+        }
+
+        function showProductDetail(id) {
+            const product = PRODUCTS.find(p => p.id === id);
+            if (!product) return;
+            
+            document.getElementById('productDetail').innerHTML = `
+                <img src="${product.img}" class="product-detail-image" alt="${product.name}">
+                <div class="product-detail-info">
+                    <h2>${product.name}</h2>
+                    <div class="product-detail-price">₹${product.price}</div>
+                    <p class="product-detail-description">${product.description}</p>
+                    <div class="product-buttons">
+                        <button onclick="addToCart(${product.id}); closeProductModal();" style="background:#f4a5a5; color:white; padding:0.8rem; border:none; border-radius:8px; width:48%; cursor:pointer;">Add to Cart</button>
+                        <button onclick="buyNow(${product.id}); closeProductModal();" style="background:#5a3030; color:white; padding:0.8rem; border:none; border-radius:8px; width:48%; cursor:pointer;">Buy Now</button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('productModal').classList.add('show');
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.remove('show');
+        }
+
+        function filter(cat) {
+            currentFilter = cat;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('searchInput').value = '';
+            showProducts();
+        }
+
+        function addToCart(id) {
+            const product = PRODUCTS.find(p => p.id === id);
+            const existing = cart.find(c => c.id === id);
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({...product, qty: 1});
+            }
+            save('cart', cart);
+            updateCartCount();
+            showNotification('Added to cart!', 'success');
+        }
+
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+
+        function openCart() {
+            const html = cart.length ? cart.map(item => `
+                <div class="cart-item">
+                    <img src="${item.img}" alt="${item.name}">
+                    <div class="cart-item-info">
+                        <div>${item.name}</div>
+                        <div>₹${item.price}</div>
+                    </div>
+                    <div class="qty-controls">
+                        <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
+                        <span>${item.qty}</span>
+                        <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+                    </div>
+                </div>
+            `).join('') : '<div style="text-align:center;padding:2rem;color:#666;">Your cart is empty</div>';
+            
+            document.getElementById('cartItems').innerHTML = html;
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            document.getElementById('cartTotal').textContent = total;
+            document.getElementById('cartModal').classList.add('show');
+        }
+
+        function closeCart() {
+            document.getElementById('cartModal').classList.remove('show');
+        }
+
+        function changeQty(id, change) {
+            const item = cart.find(c => c.id === id);
+            if (item) {
+                item.qty += change;
+                if (item.qty <= 0) {
+                    cart = cart.filter(c => c.id !== id);
+                }
+                save('cart', cart);
+                updateCartCount();
+                openCart();
+            }
+        }
+
+        function checkout() {
+            if (!cart.length) {
+                showNotification('Cart is empty!', 'error');
+                return;
+            }
+            closeCart();
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            document.getElementById('checkoutTotal').textContent = total;
+            document.getElementById('checkoutModal').classList.add('show');
+        }
+
+        function closeCheckout() {
+            document.getElementById('checkoutModal').classList.remove('show');
+        }
+
+        function placeOrder() {
+            const order = {
+                id: Date.now(),
+                items: cart,
+                total: cart.reduce((sum, item) => sum + (item.price * item.qty), 0),
+                customer: {
+                    name: document.getElementById('custName').value,
+                    phone: document.getElementById('custPhone').value,
+                    email: document.getElementById('custEmail').value,
+                    address: document.getElementById('custAddress').value,
+                    landmark: document.getElementById('custLandmark').value
+                },
+                payment: document.getElementById('payment').value,
+                status: 'pending',
+                date: new Date().toLocaleString()
+            };
+            
+            const orders = load('orders');
+            orders.push(order);
+            save('orders', orders);
+            
+            cart = [];
+            save('cart', cart);
+            updateCartCount();
+            closeCheckout();
+
+            document.getElementById('custName').value = '';
+            document.getElementById('custPhone').value = '';
+            document.getElementById('custEmail').value = '';
+            document.getElementById('custAddress').value = '';
+            document.getElementById('custLandmark').value = '';
+
+            showOrderConfirm(order.id);
+        }
+
+        function buyNow(id) {
+            buyNowProduct = PRODUCTS.find(p => p.id === id);
+            document.getElementById('buyNowProduct').innerHTML = `
+                <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem; padding: 1rem; background: #fef5f5; border-radius: 10px;">
+                    <img src="${buyNowProduct.img}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 10px;">
+                    <div>
+                        <div style="font-weight: bold; margin-bottom: 0.3rem;">${buyNowProduct.name}</div>
+                        <div style="color: #f4a5a5; font-weight: bold;">₹${buyNowProduct.price}</div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('buyTotal').textContent = buyNowProduct.price;
+            document.getElementById('buyNowModal').classList.add('show');
+        }
+
+        function closeBuyNow() {
+            document.getElementById('buyNowModal').classList.remove('show');
+            buyNowProduct = null;
+        }
+
+        function confirmBuyNow() {
+            if (!buyNowProduct) return;
+            
+            const name = document.getElementById('buyName').value;
+            const phone = document.getElementById('buyPhone').value;
+            const email = document.getElementById('buyEmail').value;
+            const address = document.getElementById('buyAddress').value;
+            
+            if (!name || !phone || !email || !address) {
+                showNotification('Please fill all required fields!', 'error');
+                return;
+            }
+            
+            const order = {
+                id: Date.now(),
+                items: [{...buyNowProduct, qty: 1}],
+                total: buyNowProduct.price,
+                customer: {
+                    name, phone, email, address,
+                    landmark: document.getElementById('buyLandmark').value
+                },
+                payment: document.getElementById('buyPayment').value,
+                status: 'pending',
+                date: new Date().toLocaleString()
+            };
+            
+            const orders = load('orders');
+            orders.push(order);
+            save('orders', orders);
+            
+            closeBuyNow();
+
+            document.getElementById('buyName').value = '';
+            document.getElementById('buyPhone').value = '';
+            document.getElementById('buyEmail').value = '';
+            document.getElementById('buyAddress').value = '';
+            document.getElementById('buyLandmark').value = '';
+
+            showOrderConfirm(order.id);
+        }
+
+        function quickOrder(e) {
+            e.preventDefault();
+            const productId = parseInt(document.getElementById('orderProduct').value);
+            
+            if (!productId) {
+                showNotification('Please select a product!', 'error');
+                return;
+            }
+            
+            const product = PRODUCTS.find(p => p.id === productId);
+            const order = {
+                id: Date.now(),
+                items: [{...product, qty: 1}],
+                total: product.price,
+                customer: {
+                    name: document.getElementById('orderName').value,
+                    phone: document.getElementById('orderPhone').value,
+                    email: '', address: '', landmark: ''
+                },
+                status: 'pending',
+                date: new Date().toLocaleString()
+            };
+            
+            const orders = load('orders');
+            orders.push(order);
+            save('orders', orders);
+            
+            e.target.reset();
+            showOrderConfirm(order.id);
+        }
+
+        // NEW: Show order confirmation modal with the Order ID
+        function showOrderConfirm(orderId) {
+            document.getElementById('confirmedOrderId').textContent = orderId;
+            document.getElementById('orderConfirmModal').classList.add('show');
+        }
+
+        function closeOrderConfirm() {
+            document.getElementById('orderConfirmModal').classList.remove('show');
+        }
+
+        function copyOrderId() {
+            const id = document.getElementById('confirmedOrderId').textContent;
+            navigator.clipboard.writeText(id).then(() => {
+                showNotification('Order ID copied!', 'success');
+            }).catch(() => {
+                showNotification('Your Order ID: ' + id, 'success');
+            });
+        }
+
+        function openLogin() {
+            document.getElementById('loginModal').classList.add('show');
+        }
+
+        function closeLogin() {
+            document.getElementById('loginModal').classList.remove('show');
+        }
+
+        function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (email === 'admin@lunasbakery.com' && password === 'admin123') {
+                user = {email, role: 'admin'};
+                closeLogin();
+                showAdmin();
+            } else {
+                showNotification('Invalid credentials!', 'error');
+            }
+        }
+
+        function showAdmin() {
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('adminPanel').classList.add('show');
+            
+            const orders = load('orders');
+            document.getElementById('adminContent').innerHTML = `
+                <h3 style="margin-bottom:1rem;">Orders Management & Dispatch</h3>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Customer Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Landmark</th>
+                            <th>Items</th>
+                            <th>Payment</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                        ${orders.map(o => `
+                            <tr>
+                                <td><strong>#${o.id}</strong></td>
+                                <td>${o.date}</td>
+                                <td>${o.customer.name}</td>
+                                <td>${o.customer.phone}</td>
+                                <td>${o.customer.email || 'N/A'}</td>
+                                <td style="max-width:150px;">${o.customer.address || 'N/A'}</td>
+                                <td>${o.customer.landmark || 'N/A'}</td>
+                                <td>${o.items.map(i => `${i.name} (${i.qty})`).join(', ')}</td>
+                                <td>${o.payment || 'COD'}</td>
+                                <td><strong>₹${o.total}</strong></td>
+                                <td><span class="status-badge status-${o.status}">${o.status}</span></td>
+                                <td style="white-space:nowrap;">
+                                    ${o.status === 'pending' ? `<button class="action-btn" onclick="updateStatus(${o.id}, 'dispatched')">Dispatch</button>` : ''}
+                                    ${o.status === 'dispatched' ? `<button class="action-btn" onclick="updateStatus(${o.id}, 'completed')">Complete</button>` : ''}
+                                    <button class="action-btn" onclick="deleteOrder(${o.id})" style="background:#dc3545;">Delete</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </table>
+                </div>
+            `;
+        }
+
+        function updateStatus(orderId, status) {
+            const orders = load('orders');
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                order.status = status;
+                save('orders', orders);
+                showAdmin();
+                showNotification(`Order #${orderId} marked as ${status}!`, 'success');
+            }
+        }
+
+        function deleteOrder(orderId) {
+            if (!confirm('Are you sure you want to delete this order?')) return;
+            let orders = load('orders');
+            orders = orders.filter(o => o.id !== orderId);
+            save('orders', orders);
+            showAdmin();
+            showNotification('Order deleted!', 'success');
+        }
+
+        function logout() {
+            user = null;
+            document.getElementById('adminPanel').classList.remove('show');
+            document.getElementById('mainContent').style.display = 'block';
+            showNotification('Logged out successfully!', 'success');
+        }
+
+        function showHome() {
+            document.getElementById('trackingSection').style.display = 'none';
+            document.getElementById('reviewsSection').style.display = 'none';
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function showMenu() {
+            document.getElementById('trackingSection').style.display = 'none';
+            document.getElementById('reviewsSection').style.display = 'none';
+            document.querySelector('.container').scrollIntoView({behavior: 'smooth'});
+        }
+
+        function showTracking() {
+            document.getElementById('reviewsSection').style.display = 'none';
+            document.getElementById('trackingSection').style.display = 'block';
+            renderMyOrders();
+            document.getElementById('trackingSection').scrollIntoView({behavior: 'smooth'});
+        }
+
+        function showReviews() {
+            document.getElementById('trackingSection').style.display = 'none';
+            document.getElementById('reviewsSection').style.display = 'block';
+            document.getElementById('reviewsSection').scrollIntoView({behavior: 'smooth'});
+            renderReviews();
+        }
+
+        function trackOrder() {
+            const orderId = parseInt(document.getElementById('trackingId').value);
+            if (!orderId) {
+                showNotification('Please enter Order ID!', 'error');
+                return;
+            }
+            
+            const orders = load('orders');
+            const order = orders.find(o => o.id === orderId);
+            
+            if (!order) {
+                document.getElementById('trackingResult').innerHTML = `
+                    <div style="text-align:center;padding:2rem;color:#dc3545;">
+                        <h3>Order Not Found</h3>
+                        <p>No order found with ID: ${orderId}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            document.getElementById('trackingResult').innerHTML = `
+                <div class="tracking-result">
+                    <h3 style="margin-bottom:1rem;">Order #${order.id}</h3>
+                    <p><strong>Customer:</strong> ${order.customer.name}</p>
+                    <p><strong>Phone:</strong> ${order.customer.phone}</p>
+                    <p><strong>Total:</strong> ₹${order.total}</p>
+                    <p><strong>Payment:</strong> ${order.payment}</p>
+                    <p><strong>Items:</strong> ${order.items.map(i => `${i.name} (${i.qty})`).join(', ')}</p>
+                    
+                    <div class="tracking-timeline">
+                        <div class="tracking-step active">
+                            <strong>Order Placed</strong>
+                            <p style="font-size:0.9rem;color:#666;">${order.date}</p>
+                        </div>
+                        <div class="tracking-step ${order.status === 'dispatched' || order.status === 'completed' ? 'active' : ''}">
+                            <strong>Order Dispatched</strong>
+                            <p style="font-size:0.9rem;color:#666;">${order.status === 'dispatched' || order.status === 'completed' ? 'Your order is on the way!' : 'Pending'}</p>
+                        </div>
+                        <div class="tracking-step ${order.status === 'completed' ? 'active' : ''}">
+                            <strong>Delivered</strong>
+                            <p style="font-size:0.9rem;color:#666;">${order.status === 'completed' ? 'Order delivered successfully!' : 'Awaiting delivery'}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // NEW: Reviews
+        function setRating(val) {
+            selectedRating = val;
+            document.getElementById('reviewRating').value = val;
+            document.querySelectorAll('.star-opt').forEach((s, i) => {
+                s.classList.toggle('active', i < val);
+            });
+        }
+
+        function submitReview(e) {
+            e.preventDefault();
+            const name   = document.getElementById('reviewName').value.trim();
+            const text   = document.getElementById('reviewText').value.trim();
+            const rating = parseInt(document.getElementById('reviewRating').value);
+
+            if (!name || !text) { showNotification('Please fill all fields!', 'error'); return; }
+            if (rating < 1)     { showNotification('Please select a rating!', 'error'); return; }
+
+            const review = {
+                id: Date.now(),
+                name,
+                text,
+                rating,
+                date: new Date().toLocaleDateString('en-IN', {year:'numeric', month:'short', day:'numeric'})
+            };
+
+            const reviews = load('reviews');
+            reviews.unshift(review);
+            save('reviews', reviews);
+
+            document.getElementById('reviewName').value = '';
+            document.getElementById('reviewText').value = '';
+            selectedRating = 0;
+            document.getElementById('reviewRating').value = 0;
+            document.querySelectorAll('.star-opt').forEach(s => s.classList.remove('active'));
+
+            renderReviews();
+            showNotification('Review submitted! Thank you ⭐', 'success');
+        }
+
+        function renderReviews() {
+            const reviews = load('reviews');
+            const grid = document.getElementById('reviewsGrid');
+            if (!grid) return;
+
+            if (!reviews.length) {
+                grid.innerHTML = '<div class="no-reviews">No reviews yet. Be the first! 💬</div>';
+                return;
+            }
+
+            grid.innerHTML = reviews.map(r => `
+                <div class="review-card">
+                    <div class="review-card-header">
+                        <span class="review-card-name">${r.name}</span>
+                        <span class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
+                    </div>
+                    <p class="review-card-text">${r.text}</p>
+                    <div class="review-card-date">${r.date}</div>
+                </div>
+            `).join('');
+        }
+
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification ' + type + ' show';
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // ── Customer Auth ──
+        let currentCustomer = null;
+
+        function openUserModal() {
+            if (currentCustomer) {
+                // already logged in — go to tracking to see their orders
+                showTracking();
+            } else {
+                document.getElementById('customerAuthModal').classList.add('show');
+            }
+        }
+
+        function closeCustomerAuth() {
+            document.getElementById('customerAuthModal').classList.remove('show');
+        }
+
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tab === 'login' ? 'authLoginForm' : 'authSignupForm').classList.add('active');
+        }
+
+        function customerSignup() {
+            const name     = document.getElementById('custSignupName').value.trim();
+            const phone    = document.getElementById('custSignupPhone').value.trim();
+            const email    = document.getElementById('custSignupEmail').value.trim();
+            const password = document.getElementById('custSignupPassword').value;
+
+            if (!name || !phone || !email || !password) {
+                showNotification('Please fill all fields!', 'error'); return;
+            }
+
+            const customers = load('customers');
+            if (customers.find(c => c.email === email)) {
+                showNotification('Account already exists. Please login.', 'error'); return;
+            }
+
+            const customer = { name, phone, email, password };
+            customers.push(customer);
+            save('customers', customers);
+
+            currentCustomer = customer;
+            save('loggedInCustomer', customer);
+            closeCustomerAuth();
+            updateNavUser();
+            showNotification(`Welcome, ${name}! 🎉`, 'success');
+        }
+
+        function customerLogin() {
+            const email    = document.getElementById('custLoginEmail').value.trim();
+            const password = document.getElementById('custLoginPassword').value;
+
+            if (!email || !password) {
+                showNotification('Please enter email and password!', 'error'); return;
+            }
+
+            // Check if it's the admin
+            if (email === 'admin@lunasbakery.com') {
+                // redirect to admin login
+                closeCustomerAuth();
+                openLogin();
+                return;
+            }
+
+            const customers = load('customers');
+            const customer = customers.find(c => c.email === email && c.password === password);
+
+            if (!customer) {
+                showNotification('Invalid email or password!', 'error'); return;
+            }
+
+            currentCustomer = customer;
+            save('loggedInCustomer', customer);
+            closeCustomerAuth();
+            updateNavUser();
+            showNotification(`Welcome back, ${customer.name}! 👋`, 'success');
+        }
+
+        function customerLogout() {
+            currentCustomer = null;
+            localStorage.removeItem('loggedInCustomer');
+            updateNavUser();
+            showNotification('Logged out!', 'success');
+        }
+
+        function updateNavUser() {
+            const btn = document.getElementById('navUserBtn');
+            if (!btn) return;
+            if (currentCustomer) {
+                btn.innerHTML = `👤 ${currentCustomer.name.split(' ')[0]} <small style="color:#f4a5a5; font-size:0.75rem; cursor:pointer;" onclick="event.stopPropagation(); customerLogout();">(logout)</small>`;
+            } else {
+                btn.innerHTML = '👤';
+            }
+        }
+
+        // Show the customer's own orders at the top of tracking section
+        function renderMyOrders() {
+            const banner = document.getElementById('myOrdersBanner');
+            if (!banner) return;
+
+            if (!currentCustomer) {
+                banner.innerHTML = '';
+                return;
+            }
+
+            const allOrders = load('orders');
+            const myOrders = allOrders.filter(o =>
+                o.customer.email === currentCustomer.email ||
+                o.customer.phone === currentCustomer.phone
+            );
+
+            if (!myOrders.length) {
+                banner.innerHTML = `
+                    <div class="my-orders-banner">
+                        <h4>👋 Hi ${currentCustomer.name}! You have no orders yet.</h4>
+                    </div>`;
+                return;
+            }
+
+            banner.innerHTML = `
+                <div class="my-orders-banner">
+                    <h4>👋 Hi ${currentCustomer.name}! Your Orders:</h4>
+                    ${myOrders.slice().reverse().map(o => `
+                        <div class="my-order-row">
+                            <span class="my-order-id" onclick="loadOrderInTracker(${o.id})">#${o.id}</span>
+                            <span>${o.items.map(i => i.name).join(', ')}</span>
+                            <span>₹${o.total}</span>
+                            <span class="status-badge status-${o.status}">${o.status}</span>
+                        </div>
+                    `).join('')}
+                    <p style="font-size:0.8rem; color:#aaa; margin-top:0.6rem;">Click an Order ID to track it below.</p>
+                </div>`;
+        }
+
+        // Clicking an order ID in the banner auto-fills and runs the tracker
+        function loadOrderInTracker(orderId) {
+            document.getElementById('trackingId').value = orderId;
+            trackOrder();
+            document.getElementById('trackingSection').scrollIntoView({behavior:'smooth'});
+        }
+
+        function filterFromFooter(cat) {
+            currentFilter = cat;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                if (b.textContent.toLowerCase() === cat + 's' || b.textContent.toLowerCase() === cat) {
+                    b.classList.add('active');
+                }
+            });
+            showProducts();
+            document.querySelector('.container').scrollIntoView({behavior: 'smooth'});
+        }
+
+        cart = load('cart');
+        updateCartCount();
+        showProducts();
+
+        // Restore customer session on page load
+        const savedCustomer = load('loggedInCustomer');
+        if (savedCustomer && savedCustomer.email) {
+            currentCustomer = savedCustomer;
+            updateNavUser();
+        }
+    </script>
+</body>
+</html>
